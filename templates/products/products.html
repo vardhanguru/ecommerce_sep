@@ -1,0 +1,915 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Products | OneStop Shopping
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =====================================================
+       GLOBAL PRODUCT PAGE
+    ===================================================== */
+
+    .products-page {
+
+        width: 100%;
+
+        min-height: calc(100vh - 100px);
+
+        padding-bottom: 80px;
+    }
+
+
+
+    /* =====================================================
+       PAGE HEADER
+    ===================================================== */
+
+    .products-header {
+
+        width: 100%;
+
+        max-width: 1200px;
+
+        margin: 0 auto;
+
+        padding: 55px 20px 40px;
+
+        text-align: center;
+    }
+
+
+    .products-header h1 {
+
+        margin: 0;
+
+        font-size: 46px;
+
+        line-height: 1.1;
+
+        font-weight: 700;
+
+        letter-spacing: -1.8px;
+
+        color: #1d1d1f;
+    }
+
+
+    .products-header p {
+
+        margin: 12px 0 0;
+
+        font-size: 19px;
+
+        line-height: 1.5;
+
+        color: #6e6e73;
+    }
+
+
+
+    /* =====================================================
+       PRODUCTS GRID
+       
+       DESKTOP:
+       3 PRODUCTS PER ROW
+    ===================================================== */
+
+    .products-container {
+
+        width: 100%;
+
+        max-width: 1150px;
+
+        margin: 0 auto;
+
+        padding: 0 20px;
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 24px;
+    }
+
+
+
+    /* =====================================================
+       PRODUCT CARD
+    ===================================================== */
+
+    .product-card {
+
+        width: 100%;
+
+        min-width: 0;
+
+        background: #ffffff;
+
+        border: 1px solid rgba(0, 0, 0, 0.04);
+
+        border-radius: 22px;
+
+        padding: 20px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 8px 30px rgba(0, 0, 0, 0.07);
+
+        transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease,
+            border-color 0.3s ease;
+    }
+
+
+    .product-card:hover {
+
+        transform: translateY(-6px);
+
+        border-color: rgba(0, 0, 0, 0.07);
+
+        box-shadow:
+            0 18px 45px rgba(0, 0, 0, 0.11);
+    }
+
+
+
+    /* =====================================================
+       IMAGE CONTAINER
+    ===================================================== */
+
+    .image-container {
+
+        width: 100%;
+
+        height: 245px;
+
+        overflow: hidden;
+
+        border-radius: 16px;
+
+        background: #f5f5f7;
+
+        margin-bottom: 20px;
+    }
+
+
+    /* =====================================================
+       PRODUCT IMAGE
+    ===================================================== */
+
+    .product-image {
+
+        width: 100%;
+
+        height: 100%;
+
+        display: block;
+
+        object-fit: cover;
+
+        object-position: center;
+
+        transition:
+            transform 0.4s ease;
+    }
+
+
+    .product-card:hover .product-image {
+
+        transform: scale(1.04);
+    }
+
+
+
+    /* =====================================================
+       NO IMAGE
+    ===================================================== */
+
+    .no-image {
+
+        width: 100%;
+
+        height: 100%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: #f5f5f7;
+
+        color: #86868b;
+
+        font-size: 14px;
+    }
+
+
+
+    /* =====================================================
+       PRODUCT INFORMATION
+    ===================================================== */
+
+    .product-info {
+
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+    }
+
+
+
+    /* =====================================================
+       PRODUCT NAME
+    ===================================================== */
+
+    .product-name {
+
+        margin: 0 0 8px;
+
+        font-size: 22px;
+
+        line-height: 1.25;
+
+        font-weight: 600;
+
+        letter-spacing: -0.5px;
+
+        color: #1d1d1f;
+    }
+
+
+
+    /* =====================================================
+       DESCRIPTION
+    ===================================================== */
+
+    .product-description {
+
+        margin: 0 0 16px;
+
+        min-height: 45px;
+
+        font-size: 15px;
+
+        line-height: 1.5;
+
+        color: #6e6e73;
+
+        display: -webkit-box;
+
+        -webkit-box-orient: vertical;
+
+        -webkit-line-clamp: 2;
+
+        overflow: hidden;
+    }
+
+
+
+    /* =====================================================
+       PRICE
+    ===================================================== */
+
+    .product-price {
+
+        margin: 0 0 18px;
+
+        font-size: 19px;
+
+        line-height: 1.2;
+
+        font-weight: 600;
+
+        color: #1d1d1f;
+    }
+
+
+
+    /* =====================================================
+       BUTTON CONTAINER
+    ===================================================== */
+
+    .button-container {
+
+        width: 100%;
+
+        display: flex;
+
+        align-items: stretch;
+
+        gap: 10px;
+    }
+
+    .add-to-cart-form {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+    }
+
+    .add-to-cart-form .btn {
+        width: 100%;
+        border: 0;
+    }
+
+
+
+    /* =====================================================
+       COMMON BUTTON
+    ===================================================== */
+
+    .btn {
+
+        flex: 1;
+
+        min-width: 0;
+
+        min-height: 43px;
+
+        padding: 12px 10px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 999px;
+
+        text-align: center;
+
+        text-decoration: none;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        white-space: nowrap;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+
+
+    /* =====================================================
+       ADD TO CART
+    ===================================================== */
+
+    .btn-primary {
+
+        background: #0071e3;
+
+        color: #ffffff;
+    }
+
+
+    .btn-primary:hover {
+
+        background: #0077ed;
+
+        color: #ffffff;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 6px 16px rgba(0, 113, 227, 0.22);
+    }
+
+
+    .btn-primary:active {
+
+        transform: scale(0.98);
+
+        box-shadow: none;
+    }
+
+
+
+    /* =====================================================
+       VIEW DETAILS
+    ===================================================== */
+
+    .btn-secondary {
+
+        background: #f5f5f7;
+
+        color: #1d1d1f;
+    }
+
+
+    .btn-secondary:hover {
+
+        background: #e8e8ed;
+
+        color: #1d1d1f;
+
+        transform: translateY(-1px);
+    }
+
+
+    .btn-secondary:active {
+
+        transform: scale(0.98);
+    }
+
+
+    /* =====================================================
+       DELETE BUTTON
+    ===================================================== */
+
+    .delete-form {
+
+        flex: 1;
+        min-width: 0;
+    }
+
+
+    .btn-danger {
+
+        background: #dc3545;
+        color: #ffffff;
+        border: none;
+        width: 100%;
+    }
+
+
+    .btn-danger:hover {
+
+        background: #d92d40;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(220, 53, 69, 0.22);
+    }
+
+
+    .btn-danger:active {
+
+        transform: scale(0.98);
+    }
+
+
+
+    /* =====================================================
+       EMPTY STATE
+    ===================================================== */
+
+    .empty {
+
+        width: 100%;
+
+        max-width: 700px;
+
+        margin: 20px auto 80px;
+
+        padding: 80px 20px;
+
+        text-align: center;
+
+        color: #6e6e73;
+    }
+
+
+    .empty h2 {
+
+        margin: 0 0 10px;
+
+        font-size: 26px;
+
+        font-weight: 600;
+
+        color: #1d1d1f;
+    }
+
+
+    .empty p {
+
+        margin: 0;
+
+        font-size: 15px;
+    }
+
+
+
+    /* =====================================================
+       TABLET
+       
+       2 PRODUCTS PER ROW
+    ===================================================== */
+
+    @media (max-width: 1000px) {
+
+        .products-header {
+
+            padding-top: 50px;
+
+            padding-bottom: 35px;
+        }
+
+
+        .products-container {
+
+            max-width: 800px;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 22px;
+        }
+
+
+        .image-container {
+
+            height: 245px;
+        }
+
+    }
+
+
+
+    /* =====================================================
+       SMALL TABLET / MOBILE
+       
+       1 PRODUCT PER ROW
+    ===================================================== */
+
+    @media (max-width: 650px) {
+
+        .products-page {
+
+            padding-bottom: 50px;
+        }
+
+
+        .products-header {
+
+            padding:
+                40px 15px 30px;
+        }
+
+
+        .products-header h1 {
+
+            font-size: 36px;
+
+            letter-spacing: -1.2px;
+        }
+
+
+        .products-header p {
+
+            margin-top: 10px;
+
+            font-size: 17px;
+        }
+
+
+        .products-container {
+
+            width: 100%;
+
+            max-width: 430px;
+
+            padding: 0 15px;
+
+            grid-template-columns: 1fr;
+
+            gap: 20px;
+        }
+
+
+        .product-card {
+
+            padding: 18px;
+
+            border-radius: 20px;
+        }
+
+
+        .image-container {
+
+            height: 250px;
+
+            border-radius: 15px;
+        }
+
+
+        .product-name {
+
+            font-size: 21px;
+        }
+
+    }
+
+
+
+    /* =====================================================
+       SMALL MOBILE
+    ===================================================== */
+
+    @media (max-width: 400px) {
+
+        .products-header {
+
+            padding-top: 32px;
+
+            padding-bottom: 25px;
+        }
+
+
+        .products-header h1 {
+
+            font-size: 32px;
+        }
+
+
+        .products-header p {
+
+            font-size: 16px;
+        }
+
+
+        .products-container {
+
+            padding: 0 12px;
+
+            gap: 18px;
+        }
+
+
+        .product-card {
+
+            padding: 15px;
+
+            border-radius: 18px;
+        }
+
+
+        .image-container {
+
+            height: 220px;
+
+            border-radius: 14px;
+        }
+
+
+        .product-name {
+
+            font-size: 20px;
+        }
+
+
+        .product-description {
+
+            font-size: 14px;
+
+            min-height: 42px;
+        }
+
+
+        .product-price {
+
+            font-size: 18px;
+        }
+
+
+        .button-container {
+
+            flex-direction: column;
+
+            gap: 8px;
+        }
+
+
+        .btn {
+
+            width: 100%;
+
+            min-height: 42px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     PRODUCTS PAGE
+===================================================== -->
+
+<main class="products-page">
+
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <header class="products-header">
+
+        <h1>
+            Products
+        </h1>
+
+        <p>
+            Discover something you'll love.
+        </p>
+
+    </header>
+
+
+
+    <!-- =================================================
+         CHECK WHETHER PRODUCTS EXIST
+    ================================================== -->
+
+    {% if products_list %}
+
+
+        <!-- =============================================
+             PRODUCT GRID
+        ============================================== -->
+
+        <section class="products-container">
+
+
+            {% for product in products_list %}
+
+
+                <!-- =====================================
+                     PRODUCT CARD
+                ====================================== -->
+
+                <article class="product-card">
+
+
+                    <!-- =================================
+                         PRODUCT IMAGE
+                    ================================== -->
+
+                    <div class="image-container">
+
+
+                        {% if product.image %}
+
+
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ product.product_name }}"
+                                class="product-image"
+                                loading="lazy"
+                            >
+
+
+                        {% else %}
+
+
+                            <div class="no-image">
+
+                                No Image Available
+
+                            </div>
+
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         PRODUCT DETAILS
+                    ================================== -->
+
+                    <div class="product-info">
+
+
+                        <!-- PRODUCT NAME -->
+
+                        <h2 class="product-name">
+
+                            {{ product.product_name }}
+
+                        </h2>
+
+
+
+                        <!-- PRODUCT DESCRIPTION -->
+
+                        <p class="product-description">
+
+                            {{ product.description }}
+
+                        </p>
+
+
+
+                        <!-- PRODUCT PRICE -->
+
+                        <p class="product-price">
+
+                            ₹{{ product.price }}
+
+                        </p>
+
+
+
+                        <!-- =================================
+                             PRODUCT ACTIONS
+                        ================================== -->
+
+                        <div class="button-container">
+
+
+                            <!-- UPDATE PRODUCT -->
+
+                            <a
+                                href="{% url 'product_details' product.id %}"
+                                class="btn btn-secondary"
+                            >
+
+                                Details
+
+                            </a>
+
+
+
+                            <!-- DELETE PRODUCT -->
+
+                            
+                            <form action="{% url 'add_to_cart' product.id %}" method="post" class="add-to-cart-form" data-add-to-cart>
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Add to cart</button>
+                            </form>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </article>
+
+
+            {% endfor %}
+
+
+        </section>
+
+
+    {% else %}
+
+
+        <!-- =============================================
+             EMPTY STATE
+        ============================================== -->
+
+        <section class="empty">
+
+
+            <h2>
+
+                No products available
+
+            </h2>
+
+
+            <p>
+
+                Products will appear here once they are added.
+
+            </p>
+
+
+        </section>
+
+
+    {% endif %}
+
+
+</main>
+
+
+{% endblock %}

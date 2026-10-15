@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    Update Product | OneStop Shopping
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =========================================
+       PAGE
+    ========================================= */
+
+    .product-form-page {
+
+        width: 100%;
+
+        min-height: calc(100vh - 90px);
+
+        padding: 55px 20px 80px;
+
+        display: flex;
+
+        justify-content: center;
+
+        align-items: flex-start;
+    }
+
+
+
+    /* =========================================
+       FORM CARD
+    ========================================= */
+
+    .form-container {
+
+        width: 100%;
+
+        max-width: 620px;
+
+        padding: 38px;
+
+        background: rgba(255, 255, 255, 0.96);
+
+        border: 1px solid rgba(0, 0, 0, 0.06);
+
+        border-radius: 24px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.07);
+
+        transition:
+            box-shadow 0.25s ease,
+            transform 0.25s ease;
+    }
+
+
+    .form-container:hover {
+
+        box-shadow:
+            0 16px 45px rgba(0, 0, 0, 0.09);
+    }
+
+
+
+    /* =========================================
+       HEADER
+    ========================================= */
+
+    .form-header {
+
+        margin-bottom: 30px;
+    }
+
+
+    .form-header h1 {
+
+        font-size: 30px;
+
+        line-height: 1.2;
+
+        font-weight: 700;
+
+        letter-spacing: -0.8px;
+
+        color: #1d1d1f;
+
+        margin-bottom: 9px;
+    }
+
+
+    .form-header p {
+
+        font-size: 15px;
+
+        line-height: 1.5;
+
+        color: #6e6e73;
+    }
+
+
+
+    /* =========================================
+       DJANGO FORM
+    ========================================= */
+
+    .product-form {
+
+        width: 100%;
+    }
+
+
+    .product-form p {
+
+        margin-bottom: 20px;
+    }
+
+
+
+    /* =========================================
+       LABEL
+    ========================================= */
+
+    .product-form label {
+
+        display: block;
+
+        margin-bottom: 8px;
+
+        font-size: 14px;
+
+        font-weight: 600;
+
+        color: #333336;
+    }
+
+
+
+    /* =========================================
+       INPUTS
+    ========================================= */
+
+    .product-form input:not([type="checkbox"]):not([type="radio"]),
+    .product-form textarea,
+    .product-form select {
+
+        width: 100%;
+
+        padding: 13px 14px;
+
+        border: 1px solid #d2d2d7;
+
+        border-radius: 12px;
+
+        outline: none;
+
+        background: #ffffff;
+
+        color: #1d1d1f;
+
+        font-family: inherit;
+
+        font-size: 15px;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+
+    .product-form input:not([type="checkbox"]):not([type="radio"]):hover,
+    .product-form textarea:hover,
+    .product-form select:hover {
+
+        border-color: #b8b8bd;
+    }
+
+
+    .product-form input:not([type="checkbox"]):not([type="radio"]):focus,
+    .product-form textarea:focus,
+    .product-form select:focus {
+
+        border-color: #0071e3;
+
+        background: #ffffff;
+
+        box-shadow:
+            0 0 0 4px rgba(0, 113, 227, 0.10);
+    }
+
+
+
+    /* =========================================
+       TEXTAREA
+    ========================================= */
+
+    .product-form textarea {
+
+        min-height: 120px;
+
+        resize: vertical;
+
+        line-height: 1.5;
+    }
+
+
+
+    /* =========================================
+       FILE INPUT
+    ========================================= */
+
+    .product-form input[type="file"] {
+
+        padding: 10px;
+
+        background: #f8f8fa;
+
+        cursor: pointer;
+    }
+
+
+    .product-form input[type="file"]:hover {
+
+        background: #f1f1f3;
+    }
+
+
+
+    /* =========================================
+       SELECT
+    ========================================= */
+
+    .product-form select {
+
+        cursor: pointer;
+    }
+
+
+
+    /* =========================================
+       HELP TEXT
+    ========================================= */
+
+    .product-form .helptext {
+
+        display: block;
+
+        margin-top: 7px;
+
+        color: #86868b;
+
+        font-size: 12px;
+
+        line-height: 1.4;
+    }
+
+
+
+    /* =========================================
+       ERRORS
+    ========================================= */
+
+    .product-form .errorlist {
+
+        list-style: none;
+
+        padding: 0;
+
+        margin: 6px 0 0;
+
+        color: #d93025;
+
+        font-size: 13px;
+
+        line-height: 1.4;
+    }
+
+
+    .product-form .errorlist li {
+
+        margin-bottom: 3px;
+    }
+
+
+
+    /* =========================================
+       SUBMIT BUTTON
+    ========================================= */
+
+    .submit-btn {
+
+        width: 100%;
+
+        margin-top: 8px;
+
+        padding: 14px 18px;
+
+        border: none;
+
+        border-radius: 999px;
+
+        background: #1d1d1f;
+
+        color: #ffffff;
+
+        font-size: 15px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+
+    .submit-btn:hover {
+
+        background: #333336;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+
+    .submit-btn:active {
+
+        transform: translateY(0);
+
+        box-shadow: none;
+    }
+
+
+
+    /* =========================================
+       BACK LINK
+    ========================================= */
+
+    .form-footer {
+
+        display: flex;
+
+        justify-content: center;
+
+        margin-top: 16px;
+    }
+
+
+    .back-link {
+
+        font-size: 14px;
+
+        font-weight: 500;
+
+        color: #6e6e73;
+
+        transition:
+            color 0.2s ease;
+    }
+
+
+    .back-link:hover {
+
+        color: #0071e3;
+    }
+
+
+
+    /* =========================================
+       MOBILE
+    ========================================= */
+
+    @media (max-width: 700px) {
+
+        .product-form-page {
+
+            padding: 35px 15px 60px;
+        }
+
+
+        .form-container {
+
+            padding: 28px 22px;
+
+            border-radius: 20px;
+        }
+
+
+        .form-header h1 {
+
+            font-size: 27px;
+        }
+
+    }
+
+
+    @media (max-width: 400px) {
+
+        .product-form-page {
+
+            padding-left: 10px;
+
+            padding-right: 10px;
+        }
+
+
+        .form-container {
+
+            padding: 24px 18px;
+
+            border-radius: 18px;
+        }
+
+
+        .form-header h1 {
+
+            font-size: 25px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="product-form-page">
+
+    <div class="form-container">
+
+        <div class="form-header">
+
+            <h1>
+                Update Product
+            </h1>
+
+            <p>
+                Edit the product details below and save your changes.
+            </p>
+
+        </div>
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="product-form"
+        >
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit" class="submit-btn">
+                Update Product
+            </button>
+
+        </form>
+
+        <div class="form-footer">
+
+            <a href="{% url 'product_list' %}" class="back-link">
+                ← Back to Products
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+
+{% block title %}OneStop Shopping | Discover your next favorite{% endblock %}
+
+{% block extra_css %}
+<style>
+    .home-page {
+        width: 100%;
+        padding-bottom: 72px;
+    }
+
+    .home-hero {
+        position: relative;
+        width: min(1400px, calc(100% - 48px));
+        min-height: min(590px, 64svh);
+        min-height: clamp(430px, 64svh, 590px);
+        margin: 0 auto;
+        padding: clamp(30px, 7vw, 88px);
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        border-radius: 18px;
+        background-color: #43564c;
+        background-image: url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2200&q=85");
+        background-position: center 54%;
+        background-size: cover;
+        color: #fff;
+        isolation: isolate;
+        animation: hero-arrive 500ms ease-out both;
+    }
+
+    .home-hero::before {
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        background: rgba(13, 25, 21, 0.48);
+        content: "";
+    }
+
+    .hero-copy {
+        width: min(610px, 100%);
+        padding: 10px 0;
+    }
+
+    .hero-kicker {
+        margin-bottom: 18px;
+        color: #e0c58c;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .hero-copy h1 {
+        max-width: 680px;
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(42px, 6vw, 76px);
+        font-weight: 500;
+        line-height: 1.02;
+        overflow-wrap: anywhere;
+    }
+
+    .hero-copy p {
+        max-width: 520px;
+        margin: 20px 0 28px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 17px;
+        line-height: 1.65;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .hero-button {
+        min-height: 46px;
+        padding: 12px 19px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        font-size: 14px;
+        font-weight: 700;
+        transition: background 180ms ease, transform 180ms ease;
+    }
+
+    .hero-button:hover { transform: translateY(-2px); }
+    .hero-button-primary { background: #f0d18b; color: #202a23; }
+    .hero-button-primary:hover { background: #f7dfa8; }
+    .hero-button-secondary {
+        border-color: rgba(255, 255, 255, 0.7);
+        background: rgba(20, 28, 24, 0.16);
+        color: #fff;
+    }
+    .hero-button-secondary:hover { background: rgba(255, 255, 255, 0.16); }
+
+    .featured-section {
+        width: min(1200px, calc(100% - 48px));
+        margin: 0 auto;
+        padding-top: 46px;
+    }
+
+    .featured-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+    }
+
+    .featured-control {
+        position: absolute;
+        z-index: 2;
+        top: 50%;
+        right: 10px;
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        transform: translateY(-50%);
+        border: 1px solid #d7ded7;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.96);
+        color: #245b43;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(24, 39, 29, 0.16);
+        transition: background 180ms ease, color 180ms ease, border-color 180ms ease, opacity 180ms ease;
+    }
+    .featured-control[data-featured-prev] {
+        right: auto;
+        left: 10px;
+    }
+    .featured-control svg { width: 23px; height: 23px; }
+    .featured-control:hover:not(:disabled) {
+        border-color: #245b43;
+        background: #245b43;
+        color: #fff;
+    }
+    .featured-control:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+    .featured-control:focus-visible {
+        outline: 3px solid rgba(36, 91, 67, 0.3);
+        outline-offset: 2px;
+    }
+
+    .featured-heading h2 {
+        margin: 0;
+        color: #202923;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 30px;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    .featured-heading p {
+        margin: 7px 0 0;
+        color: #657068;
+        font-size: 14px;
+    }
+
+    .all-products-link {
+        flex-shrink: 0;
+        color: #245b43;
+        font-size: 14px;
+        font-weight: 700;
+    }
+    .all-products-link:hover { text-decoration: underline; }
+
+    .featured-grid {
+        display: flex;
+        gap: 18px;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+    .featured-grid::-webkit-scrollbar { display: none; }
+
+    .featured-grid:focus-visible {
+        outline: 3px solid rgba(36, 91, 67, 0.3);
+        outline-offset: 4px;
+    }
+
+    .featured-carousel {
+        position: relative;
+    }
+
+    .featured-product {
+        flex: 0 0 calc((100% - 54px) / 4);
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid #e0e4de;
+        border-radius: 8px;
+        background: #fff;
+        scroll-snap-align: start;
+        transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+    .featured-product:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(30, 48, 37, 0.11);
+    }
+
+    .featured-image-wrap {
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        background: #edf0ec;
+    }
+    .featured-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        transition: transform 250ms ease;
+    }
+    .featured-product:hover .featured-image { transform: scale(1.035); }
+    .featured-no-image {
+        height: 100%;
+        display: grid;
+        place-items: center;
+        color: #68736b;
+        font-size: 13px;
+    }
+
+    .featured-info { padding: 15px 16px 17px; }
+    .featured-category {
+        margin: 0 0 6px;
+        color: #69746c;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .featured-name {
+        margin: 0;
+        color: #202923;
+        font-size: 16px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+    .featured-price {
+        margin: 10px 0 0;
+        color: #245b43;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .empty-products {
+        padding: 34px 20px;
+        border: 1px dashed #cbd4cb;
+        border-radius: 8px;
+        color: #657068;
+        text-align: center;
+    }
+
+    .home-note {
+        width: min(1200px, calc(100% - 48px));
+        margin: 42px auto 0;
+        padding-top: 22px;
+        border-top: 1px solid #dfe4de;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+    .home-note-item strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #263b2e;
+        font-size: 14px;
+    }
+    .home-note-item span { color: #68736b; font-size: 13px; line-height: 1.5; }
+
+    @keyframes hero-arrive {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+        .featured-product { flex-basis: calc((100% - 18px) / 2); }
+    }
+
+    @media (max-width: 600px) {
+        .home-page { padding-bottom: 46px; }
+        .home-hero {
+            width: calc(100% - 20px);
+            min-height: 460px;
+            padding: 28px 24px;
+            border-radius: 13px;
+            background-position: 58% center;
+        }
+        .hero-copy h1 { font-size: 46px; }
+        .hero-copy p { font-size: 15px; }
+        .hero-actions { align-items: stretch; }
+        .hero-button { flex: 1 1 150px; }
+        .featured-section, .home-note { width: calc(100% - 32px); }
+        .featured-section { padding-top: 30px; }
+        .featured-heading { align-items: start; }
+        .featured-heading h2 { font-size: 25px; }
+        .featured-heading > div { min-width: 0; }
+        .featured-control { right: 8px; width: 44px; height: 44px; }
+        .featured-control[data-featured-prev] { left: 8px; right: auto; }
+        .featured-grid { gap: 11px; }
+        .featured-product { flex-basis: calc((100% - 11px) / 2); }
+        .featured-info { padding: 12px; }
+        .featured-name { font-size: 14px; }
+        .home-note { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    }
+
+    @media (max-width: 380px) {
+        .featured-product { flex-basis: 82%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .home-hero { animation: none; }
+        .hero-button, .featured-product, .featured-image, .featured-control { transition: none; }
+        .featured-grid { scroll-behavior: auto; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="home-page">
+    <section class="home-hero" aria-labelledby="home-title">
+        <div class="hero-copy">
+            <p class="hero-kicker">Find something worth keeping</p>
+            <h1 id="home-title">OneStop Shopping</h1>
+            <p>Good finds for everyday life, gathered in one place. Explore practical favorites and discover something new for your home, work, and weekends.</p>
+            <div class="hero-actions">
+                <a class="hero-button hero-button-primary" href="{% url 'product_list' %}">Explore products</a>
+                {% if not user.is_authenticated %}
+                    <a class="hero-button hero-button-secondary" href="{% url 'register' %}">Create an account</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-section" aria-labelledby="featured-title">
+        <div class="featured-heading">
+            <div>
+                <h2 id="featured-title">A few good finds</h2>
+                <p>Recently added to the shop</p>
+            </div>
+            <a class="all-products-link" href="{% url 'product_list' %}">View all products</a>
+        </div>
+
+        {% if featured_products %}
+            <div class="featured-carousel">
+                <div class="featured-grid" data-featured-track tabindex="0" aria-label="Featured products" aria-roledescription="carousel">
+                    {% for product in featured_products %}
+                        <a class="featured-product" href="{% url 'product_details' product.pk %}">
+                            <div class="featured-image-wrap">
+                                {% if product.image %}
+                                    <img class="featured-image" src="{{ product.image.url }}" alt="{{ product.product_name }}" loading="lazy">
+                                {% else %}
+                                    <div class="featured-no-image">Image coming soon</div>
+                                {% endif %}
+                            </div>
+                            <div class="featured-info">
+                                <p class="featured-category">{{ product.Category.name }}</p>
+                                <h3 class="featured-name">{{ product.product_name }}</h3>
+                                <p class="featured-price">₹{{ product.price|floatformat:2 }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+                <button class="featured-control" type="button" data-featured-prev aria-label="Show previous products" disabled>
+                    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
+                <button class="featured-control" type="button" data-featured-next aria-label="Show next products" disabled>
+                    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                </button>
+            </div>
+        {% else %}
+            <p class="empty-products">There are no available products to show yet. Check back soon.</p>
+        {% endif %}
+    </section>
+
+    <section class="home-note" aria-label="Shopping information">
+        <div class="home-note-item">
+            <strong>One place to browse</strong>
+            <span>Explore the full collection from the products page.</span>
+        </div>
+        <div class="home-note-item">
+            <strong>Product details at a glance</strong>
+            <span>Open any item to see its description and availability.</span>
+        </div>
+        <div class="home-note-item">
+            <strong>Fresh finds</strong>
+            <span>The home page highlights recently added available products.</span>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const featuredTrack = document.querySelector('[data-featured-track]');
+    const featuredPrevious = document.querySelector('[data-featured-prev]');
+    const featuredNext = document.querySelector('[data-featured-next]');
+
+    if (featuredTrack && featuredPrevious && featuredNext) {
+        const updateFeaturedControls = () => {
+            const maxScroll = featuredTrack.scrollWidth - featuredTrack.clientWidth;
+            featuredPrevious.disabled = featuredTrack.scrollLeft <= 1;
+            featuredNext.disabled = featuredTrack.scrollLeft >= maxScroll - 1;
+        };
+
+        const moveFeatured = (direction) => {
+            const firstCard = featuredTrack.querySelector('.featured-product');
+            if (!firstCard) return;
+
+            const gap = Number.parseFloat(getComputedStyle(featuredTrack).columnGap) || 0;
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            featuredTrack.scrollBy({
+                left: direction * (firstCard.getBoundingClientRect().width + gap),
+                behavior: prefersReducedMotion ? 'auto' : 'smooth'
+            });
+        };
+
+        featuredPrevious.addEventListener('click', () => moveFeatured(-1));
+        featuredNext.addEventListener('click', () => moveFeatured(1));
+        featuredTrack.addEventListener('scroll', updateFeaturedControls, { passive: true });
+        window.addEventListener('resize', updateFeaturedControls);
+        updateFeaturedControls();
+    }
+</script>
+{% endblock %}

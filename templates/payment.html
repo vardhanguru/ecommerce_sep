@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Payment | OneStop Shopping{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-page { width: min(620px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 72px; }
+    .payment-panel { padding: 30px; background: #fff; border: 1px solid #e0e3e7; border-radius: 12px; text-align: center; }
+    .payment-panel h1 { margin: 0; color: #1d1d1f; font-size: 29px; }
+    .payment-panel p { margin: 10px 0 0; color: #626a73; line-height: 1.55; }
+    .payment-amount { margin: 26px 0; color: #1d1d1f; font-size: 32px; font-weight: 750; }
+    .payment-button { width: 100%; min-height: 48px; padding: 12px 16px; border: 0; border-radius: 7px; background: #0071e3; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    .payment-button:hover { background: #005bb5; }
+    .payment-back { display: inline-block; margin-top: 18px; color: #4f5963; font-size: 14px; }
+    @media (max-width: 480px) { .payment-panel { padding: 23px 18px; } .payment-panel h1 { font-size: 25px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="payment-page">
+    <section class="payment-panel">
+        <h1>Complete your payment</h1>
+        <p>Order #{{ order.pk }} is ready for secure payment through Razorpay.</p>
+        <div class="payment-amount">₹{{ order.total_amount|floatformat:2 }}</div>
+        <button class="payment-button" id="pay-button" type="button">Pay securely</button>
+        <a class="payment-back" href="{% url 'view_cart' %}">Return to your cart</a>
+    </section>
+</main>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    const options = {
+        key: "{{ razorpay_key_id|escapejs }}",
+        amount: {{ razorpay_amount }},
+        currency: "INR",
+        name: "OneStop Shopping",
+        description: "Order #{{ order.pk }}",
+        order_id: "{{ order.razorpay_order_id|escapejs }}",
+        handler: function (response) {
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "{% url 'payment_success' %}";
+            const fields = {
+                csrfmiddlewaretoken: "{{ csrf_token|escapejs }}",
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+            };
+            Object.entries(fields).forEach(([name, value]) => {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.name = name;
+                input.value = value;
+                form.appendChild(input);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        },
+        prefill: {
+            name: "{{ order.name|escapejs }}",
+            email: "{{ request.user.email|escapejs }}",
+            contact: "{{ order.phone_number|escapejs }}"
+        },
+        theme: { color: "#0071e3" }
+    };
+    const razorpay = new Razorpay(options);
+    document.getElementById("pay-button").addEventListener("click", function () {
+        razorpay.open();
+    });
+</script>
+{% endblock %}

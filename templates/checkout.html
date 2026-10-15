@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | OneStop Shopping{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-page { width: min(1080px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 72px; }
+    .checkout-heading { margin-bottom: 26px; }
+    .checkout-heading h1 { margin: 0; color: #1d1d1f; font-size: 34px; line-height: 1.15; }
+    .checkout-heading p { margin: 8px 0 0; color: #6e6e73; }
+    .checkout-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+    .checkout-form, .order-summary { padding: 24px; background: #fff; border: 1px solid rgba(0,0,0,.07); border-radius: 12px; }
+    .checkout-form h2, .order-summary h2 { margin: 0 0 20px; color: #1d1d1f; font-size: 20px; }
+    .field { margin-bottom: 18px; }
+    .field label, .field-label { display: block; margin-bottom: 7px; color: #34373b; font-size: 14px; font-weight: 650; }
+    .field input, .field textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #c8cdd3; border-radius: 6px; background: #fff; color: #1d1d1f; font: inherit; }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .field input:focus, .field textarea:focus { outline: 3px solid rgba(0,113,227,.16); border-color: #0071e3; }
+    .field-error, .form-errors { margin: 6px 0 0; color: #b42318; font-size: 13px; }
+    .payment-options { display: grid; gap: 10px; }
+    .payment-option { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 10px 12px; border: 1px solid #d8dce1; border-radius: 6px; color: #34373b; cursor: pointer; }
+    .payment-option input { width: 17px; min-height: 17px; margin: 0; accent-color: #0071e3; }
+    .summary-item { display: flex; justify-content: space-between; gap: 14px; padding: 12px 0; border-bottom: 1px solid #eceef0; color: #555d66; font-size: 14px; }
+    .summary-item strong { color: #26292d; font-weight: 600; }
+    .summary-total { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #dfe2e6; color: #1d1d1f; font-size: 17px; font-weight: 700; }
+    .primary-button, .secondary-link { display: flex; min-height: 46px; align-items: center; justify-content: center; padding: 11px 16px; border: 0; border-radius: 7px; background: #0071e3; color: #fff; font: inherit; font-weight: 650; text-align: center; text-decoration: none; cursor: pointer; }
+    .primary-button { width: 100%; margin-top: 22px; }
+    .primary-button:hover, .secondary-link:hover { background: #005bb5; }
+    .empty-checkout { padding: 42px 24px; background: #fff; border: 1px solid #e3e5e8; border-radius: 12px; text-align: center; }
+    .empty-checkout h2 { margin: 0; color: #1d1d1f; }
+    .empty-checkout p { margin: 9px 0 20px; color: #6e6e73; }
+    .notice-list { margin: 0 0 18px; padding: 0; list-style: none; }
+    .notice-list li { margin-bottom: 8px; padding: 11px 13px; border-left: 3px solid #b42318; background: #fff3f2; color: #762b27; font-size: 14px; }
+    @media (max-width: 760px) { .checkout-layout { grid-template-columns: minmax(0,1fr); } .order-summary { order: -1; } }
+    @media (max-width: 480px) { .checkout-page { width: calc(100% - 24px); padding-top: 30px; } .checkout-heading h1 { font-size: 29px; } .checkout-form, .order-summary { padding: 18px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="checkout-page">
+    <header class="checkout-heading">
+        <h1>Checkout</h1>
+        <p>Confirm your delivery details and payment method.</p>
+    </header>
+
+    {% if messages %}
+        <ul class="notice-list" aria-live="polite">
+            {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if cart_items %}
+        <div class="checkout-layout">
+            <form class="checkout-form" method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <h2>Delivery details</h2>
+                {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+                <div class="field">
+                    <label for="{{ form.name.id_for_label }}">Full name</label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+                <div class="field">
+                    <label for="{{ form.phone_number.id_for_label }}">Phone number</label>
+                    {{ form.phone_number }}
+                    {% for error in form.phone_number.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+                <div class="field">
+                    <label for="{{ form.address.id_for_label }}">Delivery address</label>
+                    {{ form.address }}
+                    {% for error in form.address.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+                <div class="field">
+                    <span class="field-label">Payment method</span>
+                    <div class="payment-options">
+                        {% for option in form.payment_method %}
+                            <label class="payment-option">{{ option.tag }}<span>{{ option.choice_label }}</span></label>
+                        {% endfor %}
+                    </div>
+                    {% for error in form.payment_method.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+                <button class="primary-button" type="submit">Place order</button>
+            </form>
+
+            <aside class="order-summary" aria-label="Order summary">
+                <h2>Order summary</h2>
+                {% for item in cart_items %}
+                    <div class="summary-item">
+                        <strong>{{ item.product.product_name }} × {{ item.quantity }}</strong>
+                        <span>₹{{ item.product.price|floatformat:2 }}</span>
+                    </div>
+                {% endfor %}
+                <div class="summary-total"><span>Total</span><span>₹{{ total_amount|floatformat:2 }}</span></div>
+            </aside>
+        </div>
+    {% else %}
+        <section class="empty-checkout">
+            <h2>Your cart is empty</h2>
+            <p>Add products to your cart before checking out.</p>
+            <a class="secondary-link" href="{% url 'product_list' %}">Browse products</a>
+        </section>
+    {% endif %}
+</main>
+{% endblock %}

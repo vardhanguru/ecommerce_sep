@@ -1,0 +1,1143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+            OneStop Shopping
+        {% endblock %}
+    </title>
+
+
+    <style>
+
+        /* =========================================
+           GLOBAL RESET
+        ========================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                "Segoe UI",
+                sans-serif;
+
+            background: #f5f5f7;
+
+            color: #1d1d1f;
+
+            min-height: 100vh;
+
+            -webkit-font-smoothing: antialiased;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+
+
+        /* =========================================
+           NAVIGATION BAR
+        ========================================= */
+
+        .navbar-wrapper {
+
+            position: sticky;
+
+            top: 14px;
+
+            z-index: 1000;
+
+            width: 100%;
+
+            padding: 0 24px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .navbar {
+
+            width: 100%;
+
+            max-width: 1400px;
+
+            min-height: 66px;
+
+            margin: 0 auto;
+
+            padding: 10px 14px 10px 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+            background: rgba(255, 255, 255, 0.88);
+
+            border: 1px solid rgba(0, 0, 0, 0.07);
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 8px 30px rgba(0, 0, 0, 0.07);
+
+            backdrop-filter: blur(20px);
+
+            -webkit-backdrop-filter: blur(20px);
+
+            transition:
+                box-shadow 0.25s ease,
+                background 0.25s ease;
+        }
+
+
+        .navbar:hover {
+
+            box-shadow:
+                0 12px 38px rgba(0, 0, 0, 0.09);
+        }
+
+
+
+        /* =========================================
+           SHOP LOGO / NAME
+        ========================================= */
+
+        .shop-name {
+
+            flex-shrink: 0;
+
+            font-size: 21px;
+
+            font-weight: 700;
+
+            letter-spacing: -0.6px;
+
+            white-space: nowrap;
+
+            color: #1d1d1f;
+
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .shop-name:hover {
+
+            opacity: 0.72;
+
+            transform: translateY(-1px);
+        }
+
+
+
+        /* =========================================
+           NAVIGATION RIGHT SIDE
+        ========================================= */
+
+        .nav-right {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-end;
+
+            gap: 6px;
+
+            min-width: 0;
+        }
+
+
+
+        /* =========================================
+           SEARCH BAR
+        ========================================= */
+
+        .search-box {
+
+            width: 220px;
+
+            height: 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 0 13px;
+
+            background: #f5f5f7;
+
+            border: 1px solid transparent;
+
+            border-radius: 12px;
+
+            transition:
+                width 0.25s ease,
+                background 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .search-box:focus-within {
+
+            width: 250px;
+
+            background: #ffffff;
+
+            border-color: rgba(0, 0, 0, 0.12);
+
+            box-shadow:
+                0 0 0 3px rgba(0, 113, 227, 0.08);
+        }
+
+
+        .search-icon {
+
+            width: 17px;
+
+            height: 17px;
+
+            flex-shrink: 0;
+
+            color: #86868b;
+        }
+
+
+        .search-input {
+
+            width: 100%;
+
+            min-width: 0;
+
+            border: none;
+
+            outline: none;
+
+            background: transparent;
+
+            color: #1d1d1f;
+
+            font-size: 14px;
+        }
+
+
+        .search-input::placeholder {
+
+            color: #86868b;
+        }
+
+
+
+        /* =========================================
+           NAV LINKS
+        ========================================= */
+
+        .nav-link {
+
+            height: 40px;
+
+            padding: 0 13px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            border-radius: 11px;
+
+            color: #424245;
+
+            font-size: 14px;
+
+            font-weight: 500;
+
+            white-space: nowrap;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .nav-link:hover {
+
+            background: #f0f0f2;
+
+            color: #1d1d1f;
+
+            transform: translateY(-1px);
+        }
+
+
+        .nav-link:active {
+
+            transform: scale(0.97);
+        }
+
+        .category-menu {
+            position: relative;
+        }
+
+        .category-toggle {
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .category-chevron {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.18s ease;
+        }
+
+        .category-toggle[aria-expanded="true"] .category-chevron {
+            transform: rotate(180deg);
+        }
+
+        .category-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            z-index: 1100;
+            width: 220px;
+            max-height: min(360px, calc(100vh - 110px));
+            overflow-y: auto;
+            padding: 7px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
+        }
+
+        .category-dropdown[hidden] {
+            display: none;
+        }
+
+        .category-option {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #30363d;
+            font-size: 14px;
+            transition: background 0.16s ease, color 0.16s ease;
+        }
+
+        .category-option:hover,
+        .category-option:focus-visible {
+            outline: none;
+            background: #f0f5fa;
+            color: #005bb5;
+        }
+
+        .category-empty {
+            padding: 10px 12px;
+            color: #6e6e73;
+            font-size: 13px;
+        }
+
+
+
+        /* =========================================
+           CART
+        ========================================= */
+
+        .cart-link {
+
+            position: relative;
+
+            width: 42px;
+
+            height: 42px;
+
+            padding: 0;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 12px;
+        }
+
+
+        .cart-icon {
+
+            width: 20px;
+
+            height: 20px;
+
+            color: #1d1d1f;
+
+            transition:
+                transform 0.2s ease;
+        }
+
+
+        .cart-link:hover .cart-icon {
+
+            transform: scale(1.08);
+        }
+
+
+        /* Optional cart count */
+
+        .cart-count {
+
+            position: absolute;
+
+            top: 3px;
+
+            right: 2px;
+
+            min-width: 17px;
+
+            height: 17px;
+
+            padding: 0 4px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 999px;
+
+            background: #0071e3;
+
+            color: white;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            line-height: 1;
+        }
+
+        .cart-count[hidden] {
+            display: none;
+        }
+
+        .cart-link.cart-link-added .cart-icon {
+            animation: cart-bump 0.55s ease;
+        }
+
+        .cart-link.cart-link-added .cart-count {
+            animation: count-pop 0.45s ease;
+        }
+
+        .cart-link::after {
+            content: "+";
+            position: absolute;
+            top: -7px;
+            right: -5px;
+            width: 19px;
+            height: 19px;
+            display: grid;
+            place-items: center;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            background: #27834a;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1;
+            opacity: 0;
+            transform: scale(0.4);
+            pointer-events: none;
+        }
+
+        .cart-link.cart-link-added::after {
+            animation: plus-pop 0.75s ease both;
+        }
+
+        @keyframes cart-bump {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            35% { transform: translateY(-5px) rotate(-8deg); }
+            70% { transform: translateY(1px) rotate(5deg); }
+        }
+
+        @keyframes count-pop {
+            0% { transform: scale(0.6); }
+            65% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes plus-pop {
+            20% { opacity: 1; transform: scale(1.15); }
+            70% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: translateY(-7px) scale(0.8); }
+        }
+
+        .cart-toast {
+            position: fixed;
+            top: 92px;
+            right: 24px;
+            z-index: 1100;
+            max-width: min(360px, calc(100vw - 32px));
+            padding: 13px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            border: 1px solid #cfe8d5;
+            border-left: 4px solid #27834a;
+            border-radius: 8px;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
+            color: #244d32;
+            font-size: 14px;
+            font-weight: 600;
+            animation: toast-in 0.3s ease both;
+        }
+
+        .cart-toast.is-leaving {
+            animation: toast-out 0.25s ease both;
+        }
+
+        .cart-toast.is-error {
+            border-color: #f0d0ce;
+            border-left-color: #b23b35;
+            color: #762b27;
+        }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toast-out {
+            to { opacity: 0; transform: translateY(-8px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cart-link.cart-link-added .cart-icon,
+            .cart-link.cart-link-added .cart-count,
+            .cart-link.cart-link-added::after,
+            .cart-toast,
+            .cart-toast.is-leaving {
+                animation: none;
+            }
+        }
+
+
+
+        /* =========================================
+           PROFILE
+        ========================================= */
+
+        .profile-link {
+
+            width: 42px;
+
+            height: 42px;
+
+            padding: 0;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 12px;
+        }
+
+
+        .profile-icon {
+
+            width: 20px;
+
+            height: 20px;
+
+            color: #424245;
+
+            transition:
+                transform 0.2s ease;
+        }
+
+
+        .profile-link:hover .profile-icon {
+
+            transform: scale(1.08);
+        }
+
+
+
+        /* =========================================
+           MOBILE MENU BUTTON
+        ========================================= */
+
+        .mobile-menu-button {
+
+            display: none;
+
+            width: 42px;
+
+            height: 42px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background: transparent;
+
+            cursor: pointer;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .mobile-menu-button:hover {
+
+            background: #f0f0f2;
+        }
+
+
+        .menu-icon {
+
+            width: 21px;
+
+            height: 21px;
+        }
+
+
+
+        /* =========================================
+           PAGE CONTENT
+        ========================================= */
+
+        .page-content {
+
+            width: 100%;
+        }
+
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 1050px) {
+
+            .search-box {
+
+                width: 180px;
+            }
+
+
+            .search-box:focus-within {
+
+                width: 200px;
+            }
+
+
+            .nav-link {
+
+                padding: 0 9px;
+            }
+
+        }
+
+
+
+        @media (max-width: 850px) {
+
+            .navbar-wrapper {
+
+                padding: 0 14px;
+
+                top: 10px;
+            }
+
+
+            .navbar {
+
+                padding-left: 16px;
+
+                padding-right: 10px;
+            }
+
+
+            .search-box {
+
+                width: 150px;
+            }
+
+
+            .search-box:focus-within {
+
+                width: 170px;
+            }
+
+
+            .nav-link {
+
+                padding: 0 7px;
+
+                font-size: 13px;
+            }
+
+        }
+
+
+
+        @media (max-width: 700px) {
+
+            .navbar-wrapper {
+
+                top: 8px;
+
+                padding: 0 10px;
+            }
+
+
+            .navbar {
+
+                min-height: 60px;
+
+                padding: 8px 9px 8px 16px;
+
+                border-radius: 16px;
+            }
+
+
+            .shop-name {
+
+                font-size: 18px;
+            }
+
+
+            .desktop-nav {
+
+                display: none;
+            }
+
+
+            .mobile-menu-button {
+
+                display: flex;
+            }
+
+        }
+
+
+
+        @media (max-width: 400px) {
+
+            .navbar {
+
+                padding-left: 13px;
+            }
+
+
+            .shop-name {
+
+                font-size: 17px;
+            }
+
+
+            .navbar-wrapper {
+
+                padding: 0 8px;
+            }
+
+        }
+
+    </style>
+
+
+    {% block extra_css %}
+    
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================= -->
+
+    <div class="navbar-wrapper">
+
+        <nav class="navbar">
+
+
+            <!-- SHOP NAME -->
+
+            <a href="{% url 'storefront_home' %}"
+               class="shop-name">
+
+                OneStop Shopping
+
+            </a>
+
+
+
+            <!-- DESKTOP NAVIGATION -->
+
+            <div class="nav-right desktop-nav">
+
+
+                <!-- SEARCH -->
+
+                <form class="search-box"
+                      method="GET"
+                      action="{% url 'product_list' %}?search={{ request.GET.search|urlencode }}">
+
+                    <svg class="search-icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2">
+
+                        <circle cx="11"
+                                cy="11"
+                                r="7">
+                        </circle>
+
+                        <path d="M20 20L16.65 16.65">
+                        </path>
+
+                    </svg>
+
+
+                    <input
+                        type="search"
+                        name="search"
+                        class="search-input"
+                        placeholder="Search"
+                        autocomplete="off"
+                    >
+
+                </form>
+
+
+
+                <!-- CATEGORIES -->
+                <div class="category-menu" data-category-menu>
+                    <button class="nav-link category-toggle" type="button" aria-expanded="false" aria-controls="category-dropdown" data-category-toggle>
+                        {% if selected_category %}
+                            {{ selected_category.name }}
+                        {% else %}
+                            Categories
+                        {% endif %}
+                        <svg class="category-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="m3.5 6 4.5 4 4.5-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </button>
+                    <div class="category-dropdown" id="category-dropdown" hidden>
+                        {% for category in categories %}
+                            <a class="category-option" href="{% url 'product_list' %}?category={{ category.id }}">{{ category.name }}</a>
+                        {% empty %}
+                            <p class="category-empty">No categories available.</p>
+                        {% endfor %}
+                        <a class="category-option" href="{% url 'product_list' %}">All Products</a>
+                    </div>
+                </div>
+
+
+
+                {% block auth_navigation %}
+                    {% if not user.is_authenticated %}
+                        <!-- LOGIN -->
+                        <a href="{% url 'login' %}" class="nav-link">Login</a>
+
+                        <!-- REGISTER -->
+                        <a href="{% url 'register' %}" class="nav-link">Register</a>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                        <!-- LOGOUT -->
+                        <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                    {% endif %}
+                {% endblock %}
+
+                {% if user.is_authenticated %}
+                        <!-- Orders -->
+                        <a href="{% url 'fetch_all_orders' %}" class="nav-link">Orders</a>
+                    {% endif %}
+
+
+
+                <!-- CART -->
+
+                <a href="{% url 'view_cart' %}"
+                   class="nav-link cart-link"
+                   aria-label="Shopping Cart">
+
+
+                    <svg class="cart-icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="9"
+                                cy="20"
+                                r="1.5">
+                        </circle>
+
+                        <circle cx="18"
+                                cy="20"
+                                r="1.5">
+                        </circle>
+
+                        <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 8H6">
+                        </path>
+
+                    </svg>
+
+
+                    <span class="cart-count" data-cart-count {% if not cart_count %}hidden{% endif %}>
+                        {{ cart_count|default:0 }}
+                    </span>
+
+                </a>
+
+
+
+                <!-- PROFILE -->
+
+                <a href="{% url 'profile' %}"
+                   class="nav-link profile-link"
+                   aria-label="Profile">
+
+
+                    <svg class="profile-icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <circle cx="12"
+                                cy="8"
+                                r="3.5">
+                        </circle>
+
+                        <path d="M5 21c.8-4 3.2-6 7-6s6.2 2 7 6">
+                        </path>
+
+                    </svg>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- MOBILE MENU BUTTON -->
+
+            <button class="mobile-menu-button"
+                    type="button"
+                    aria-label="Open menu">
+
+                <svg class="menu-icon"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round">
+
+                    <path d="M4 7h16"></path>
+
+                    <path d="M4 12h16"></path>
+
+                    <path d="M4 17h16"></path>
+
+                </svg>
+
+            </button>
+
+
+        </nav>
+
+    </div>
+
+
+
+    <!-- =========================================
+         PAGE CONTENT
+    ========================================= -->
+
+    <main class="page-content">
+
+        {% block content %}
+
+        {% endblock %}
+
+    </main>
+
+    {% for message in messages %}
+        {% if 'cart-added' in message.tags %}
+            <div class="cart-toast" role="status" aria-live="polite">
+                <span>{{ message }}</span>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+
+
+    {% block extra_js %}
+    {% endblock %}
+
+    <script>
+        const cartLink = document.querySelector('.cart-link');
+        const cartCount = document.querySelector('[data-cart-count]');
+        let cartToastTimer;
+
+        const categoryMenu = document.querySelector('[data-category-menu]');
+        const categoryToggle = categoryMenu?.querySelector('[data-category-toggle]');
+        const categoryDropdown = categoryMenu?.querySelector('.category-dropdown');
+
+        function setCategoryMenuOpen(isOpen) {
+            if (!categoryToggle || !categoryDropdown) return;
+            categoryToggle.setAttribute('aria-expanded', String(isOpen));
+            categoryDropdown.hidden = !isOpen;
+        }
+
+        categoryToggle?.addEventListener('click', () => {
+            setCategoryMenuOpen(categoryToggle.getAttribute('aria-expanded') !== 'true');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (categoryMenu && !categoryMenu.contains(event.target)) {
+                setCategoryMenuOpen(false);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setCategoryMenuOpen(false);
+                categoryToggle?.focus();
+            }
+        });
+
+        function showCartMessage(message, count, isSuccess = true) {
+            if (isSuccess && cartCount && Number.isFinite(count)) {
+                cartCount.textContent = count;
+                cartCount.hidden = count < 1;
+            }
+
+            if (isSuccess && cartLink) {
+                cartLink.classList.remove('cart-link-added');
+                requestAnimationFrame(() => cartLink.classList.add('cart-link-added'));
+                window.setTimeout(() => cartLink.classList.remove('cart-link-added'), 800);
+            }
+
+            let toast = document.querySelector('.cart-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'cart-toast';
+                toast.setAttribute('role', 'status');
+                toast.setAttribute('aria-live', 'polite');
+                document.body.append(toast);
+            }
+
+            toast.classList.remove('is-leaving');
+            toast.classList.toggle('is-error', !isSuccess);
+            toast.textContent = message;
+            toast.hidden = false;
+            window.clearTimeout(cartToastTimer);
+            cartToastTimer = window.setTimeout(() => {
+                toast.classList.add('is-leaving');
+                window.setTimeout(() => toast.remove(), 250);
+            }, 2600);
+        }
+
+        const existingCartToast = document.querySelector('.cart-toast');
+        if (existingCartToast) {
+            cartLink?.classList.add('cart-link-added');
+            window.setTimeout(() => {
+                existingCartToast.classList.add('is-leaving');
+                window.setTimeout(() => existingCartToast.remove(), 250);
+            }, 2600);
+        }
+
+        document.querySelectorAll('[data-add-to-cart]').forEach((form) => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const button = form.querySelector('button[type="submit"]');
+                button.disabled = true;
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new FormData(form)
+                    });
+                    if (response.redirected) {
+                        window.location.assign(response.url);
+                        return;
+                    }
+                    if (!response.ok) throw new Error('Unable to add this item.');
+                    const result = await response.json();
+                    showCartMessage(`${result.product_name} added to your cart.`, result.cart_count);
+                } catch (error) {
+                    showCartMessage('Could not add item. Please try again.', Number.NaN, false);
+                } finally {
+                    button.disabled = false;
+                }
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>

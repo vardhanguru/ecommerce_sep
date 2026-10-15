@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Result | OneStop Shopping{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-page { width: min(600px, calc(100% - 32px)); margin: 0 auto; padding: 54px 0 72px; }
+    .result-panel { padding: 30px; background: #fff; border: 1px solid #e0e3e7; border-radius: 12px; text-align: center; }
+    .result-mark { width: 58px; height: 58px; margin: 0 auto 17px; display: grid; place-items: center; border-radius: 50%; font-size: 28px; font-weight: 700; }
+    .result-success .result-mark { background: #e8f6ec; color: #207a3c; }
+    .result-failure .result-mark { background: #fff0ef; color: #b42318; }
+    .result-panel h1 { margin: 0; color: #1d1d1f; font-size: 27px; }
+    .result-panel p { margin: 11px 0 0; color: #626a73; line-height: 1.55; }
+    .result-meta { overflow-wrap: anywhere; font-size: 13px; }
+    .result-link { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; margin-top: 22px; padding: 10px 16px; border-radius: 7px; background: #0071e3; color: #fff; font-weight: 650; }
+    .result-link:hover { background: #005bb5; }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="result-page">
+    <section class="result-panel {% if success %}result-success{% else %}result-failure{% endif %}">
+        <div class="result-mark" aria-hidden="true">{% if success %}✓{% else %}!{% endif %}</div>
+        <h1>{% if success %}Payment confirmed{% else %}Payment not verified{% endif %}</h1>
+        <p>{{ message }}</p>
+        {% if order %}<p class="result-meta">Order #{{ order.pk }} · ₹{{ order.total_amount|floatformat:2 }}</p>{% endif %}
+        {% if payment_id %}<p class="result-meta">Payment reference: {{ payment_id }}</p>{% endif %}
+        <a class="result-link" href="{% url 'storefront_home' %}">Back to the store</a>
+    </section>
+</main>
+{% endblock %}

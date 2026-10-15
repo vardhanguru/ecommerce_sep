@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ product.product_name }} | OneStop Shopping
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-page {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 44px 0 72px;
+    }
+
+    .detail-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .back-link {
+        color: #4b5563;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .back-link:hover { color: #0071e3; }
+
+    .detail-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+        overflow: hidden;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 22px;
+        box-shadow: 0 12px 38px rgba(0, 0, 0, 0.07);
+    }
+
+    .detail-media {
+        min-height: 460px;
+        display: grid;
+        place-items: center;
+        padding: 28px;
+        background: #f0f2f4;
+    }
+
+    .detail-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-height: 560px;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+        border-radius: 12px;
+    }
+
+    .detail-no-image {
+        color: #737982;
+        font-size: 15px;
+    }
+
+    .detail-content {
+        min-width: 0;
+        padding: clamp(26px, 5vw, 54px);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .detail-category {
+        margin: 0 0 12px;
+        color: #596579;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .detail-content h1 {
+        margin: 0;
+        color: #1d1d1f;
+        font-size: clamp(30px, 4vw, 42px);
+        line-height: 1.12;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-price {
+        margin: 18px 0 22px;
+        color: #1d1d1f;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .detail-description {
+        width: 100%;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        color: #59616b;
+        font-size: 15px;
+        line-height: 1.75;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-meta {
+        width: 100%;
+        margin: 24px 0 0;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .meta-item {
+        padding: 13px 14px;
+        background: #f5f5f7;
+        border-radius: 10px;
+    }
+
+    .meta-item dt {
+        margin-bottom: 4px;
+        color: #747982;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .meta-item dd {
+        margin: 0;
+        color: #252a30;
+        font-size: 14px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .availability { color: #247044 !important; }
+    .unavailable { color: #a33a35 !important; }
+
+    .detail-actions {
+        width: 100%;
+        margin-top: auto;
+        padding-top: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .detail-button {
+        min-height: 44px;
+        padding: 11px 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 650;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .detail-button:hover { transform: translateY(-1px); }
+
+    .detail-button-primary {
+        background: #0071e3;
+        color: #ffffff;
+    }
+
+    .detail-button-primary:hover { background: #0077ed; }
+
+    .detail-button-secondary {
+        background: #f0f1f3;
+        color: #262a30;
+    }
+
+    .detail-button-secondary:hover { background: #e4e6e9; }
+
+    @media (max-width: 760px) {
+        .detail-page { padding-top: 28px; }
+        .detail-layout { grid-template-columns: minmax(0, 1fr); }
+        .detail-media { min-height: 0; aspect-ratio: 1 / 0.82; }
+        .detail-image { max-height: 420px; }
+    }
+
+    @media (max-width: 440px) {
+        .detail-page { width: min(100% - 24px, 1120px); }
+        .detail-media { padding: 16px; }
+        .detail-content { padding: 24px 18px; }
+        .detail-meta { grid-template-columns: minmax(0, 1fr); }
+        .detail-actions { flex-direction: column; }
+        .detail-button { width: 100%; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="detail-page">
+    <nav class="detail-topbar" aria-label="Product navigation">
+        <a class="back-link" href="{% url 'product_list' %}">← Back to products</a>
+    </nav>
+
+    <article class="detail-layout">
+        <div class="detail-media">
+            {% if product.image %}
+                <img class="detail-image" src="{{ product.image.url }}" alt="{{ product.product_name }}">
+            {% else %}
+                <p class="detail-no-image">No product image available</p>
+            {% endif %}
+        </div>
+
+        <div class="detail-content">
+            <p class="detail-category">{{ product.Category.name }}</p>
+            <h1>{{ product.product_name }}</h1>
+            <p class="detail-price">₹{{ product.price|floatformat:2 }}</p>
+
+            <div class="detail-description">
+                {{ product.description|linebreaksbr }}
+            </div>
+
+            <dl class="detail-meta">
+                <div class="meta-item">
+                    <dt>Availability</dt>
+                    <dd class="{% if product.is_available %}availability{% else %}unavailable{% endif %}">
+                        {% if product.is_available %}Available{% else %}Unavailable{% endif %}
+                    </dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Quantity in stock</dt>
+                    <dd>{{ product.quantity }}</dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Added</dt>
+                    <dd>{{ product.created_at|date:"M j, Y" }}</dd>
+                </div>
+                <div class="meta-item">
+                    <dt>Last updated</dt>
+                    <dd>{{ product.updated_at|date:"M j, Y" }}</dd>
+                </div>
+            </dl>
+
+            <div class="detail-actions">
+                <a class="detail-button detail-button-primary" href="{% url 'product_update' product.pk %}">Edit product</a>
+                <a class="detail-button detail-button-secondary" href="{% url 'product_list' %}">Continue browsing</a>
+            </div>
+        </div>
+    </article>
+</main>
+{% endblock %}

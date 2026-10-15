@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product Views | Code Summary</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202923;
+      --muted: #58645c;
+      --paper: #f5f7f2;
+      --panel: #ffffff;
+      --line: #d8ded7;
+      --green: #245b43;
+      --red: #8e342b;
+      --red-bg: #fff1ed;
+      --gold: #765611;
+      --gold-bg: #fff8df;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 16px/1.6 Georgia, "Times New Roman", serif;
+    }
+
+    main {
+      width: min(900px, calc(100% - 36px));
+      margin: 48px auto;
+    }
+
+    header { border-bottom: 2px solid var(--green); padding-bottom: 24px; }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--green);
+      font: 700 12px/1.4 "Segoe UI", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); }
+    h2 { margin: 0 0 12px; font-size: 1.5rem; }
+    h3 { margin: 0 0 8px; font-size: 1.12rem; }
+    p { margin: 0 0 12px; }
+
+    .lede { max-width: 70ch; margin-top: 12px; color: var(--muted); }
+    section { margin-top: 28px; }
+
+    .view-list { display: grid; gap: 12px; }
+
+    article, .note {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+    }
+
+    .route {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--green);
+      font: 600 13px/1.4 "Segoe UI", sans-serif;
+    }
+
+    code {
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #edf1eb;
+      font: 0.9em Consolas, "Courier New", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .note { border-left: 4px solid var(--gold); background: var(--gold-bg); }
+    .note.critical { border-left-color: var(--red); background: var(--red-bg); }
+
+    ul { margin: 8px 0 0; padding-left: 22px; }
+    li + li { margin-top: 6px; }
+
+    footer {
+      margin-top: 32px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font: 13px/1.5 "Segoe UI", sans-serif;
+    }
+
+    @media (max-width: 600px) {
+      main { margin: 28px auto; }
+      article, .note { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Products app · View layer</p>
+      <h1>What <code>views.py</code> does</h1>
+      <p class="lede">These Django view functions connect product requests to the database, forms, templates, and redirects. The notes below describe the intended flow and call out issues in the current source.</p>
+    </header>
+
+    <section aria-labelledby="views-heading">
+      <h2 id="views-heading">View-by-view</h2>
+      <div class="view-list">
+        <article>
+          <span class="route">Create · <code>/create/</code></span>
+          <h3><code>product_create(request)</code></h3>
+          <p>Builds a <code>ProductForm</code>. On POST, it binds submitted fields and uploaded files, validates them, saves a valid product, and redirects to <code>product_list</code>. Otherwise it renders <code>products/product_create.html</code>.</p>
+          <p><strong>Issue:</strong> the template context is assembled before the POST form is bound. If submitted data is invalid, the view renders the original empty form instead of showing the bound form and its validation errors.</p>
+        </article>
+
+        <article>
+          <span class="route">List · <code>/list/</code></span>
+          <h3><code>product_list(request)</code></h3>
+          <p>Fetches all rows with <code>Products.objects.all()</code>, passes them to the template as <code>products_list</code>, and renders <code>products/products.html</code>.</p>
+        </article>
+
+        <article>
+          <span class="route">Update · <code>/update/&lt;int:pk&gt;/</code></span>
+          <h3><code>product_update(request, pk)</code></h3>
+          <p>Intended to find one product by its primary key, show a form pre-filled with that product, and save valid POST changes before redirecting to the list.</p>
+          <p><strong>Issue:</strong> the second assignment to <code>product</code> is invalid Python syntax. The first lookup uses <code>Products.objects.get()</code>, which raises <code>Products.DoesNotExist</code> when the key is missing. A common Django pattern is <code>get_object_or_404(Products, pk=pk)</code>.</p>
+        </article>
+
+        <article>
+          <span class="route">Details · no URL configured</span>
+          <h3><code>product_details(request, pk)</code></h3>
+          <p>This view is only a stub: it has no implementation or response. It is also not imported or registered in <code>products/urls.py</code>.</p>
+        </article>
+
+        <article>
+          <span class="route">Delete · <code>/delete/&lt;int:pk&gt;/</code></span>
+          <h3><code>product_delete(request, pk)</code></h3>
+          <p>Uses <code>get_object_or_404()</code> to find the product. It deletes the record only for a POST request, then redirects to <code>product_list</code>. A non-POST request also redirects, without deleting.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="dependencies-heading">
+      <h2 id="dependencies-heading">Main dependencies</h2>
+      <ul>
+        <li><code>Products</code> is the model used for product database queries.</li>
+        <li><code>ProductForm</code> handles product input and persistence.</li>
+        <li><code>render</code> returns HTML templates; <code>redirect</code> sends the browser to a named URL; <code>get_object_or_404</code> returns a 404 response when a product is absent.</li>
+      </ul>
+    </section>
+
+    <section class="note critical" aria-labelledby="blocking-heading">
+      <h2 id="blocking-heading">Important: module currently cannot load</h2>
+      <p>The invalid update assignment is a syntax error, and the details function has no executable body. Python cannot import this module in its current state, so Django cannot use these views until both issues are corrected.</p>
+    </section>
+
+    <section class="note" aria-labelledby="flow-heading">
+      <h2 id="flow-heading">Typical request flow</h2>
+      <p>A browser request reaches a URL in <code>products/urls.py</code>, Django calls the mapped view, and the view either renders a template or redirects after a successful action. Create and update also validate submitted form data before saving.</p>
+    </section>
+
+    <footer>Summary based on the current <code>products/views.py</code> and <code>products/urls.py</code>.</footer>
+  </main>
+</body>
+</html>

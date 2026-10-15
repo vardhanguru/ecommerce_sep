@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed | OneStop Shopping{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-page { width: min(680px, calc(100% - 32px)); margin: 0 auto; padding: 54px 0 72px; }
+    .confirmation-panel { padding: 30px; background: #fff; border: 1px solid #e0e3e7; border-radius: 12px; }
+    .confirmation-panel h1 { margin: 0; color: #1d1d1f; font-size: 29px; }
+    .confirmation-panel > p { margin: 10px 0 0; color: #626a73; line-height: 1.55; }
+    .confirmation-details { display: grid; grid-template-columns: 1fr auto; gap: 12px 18px; margin: 24px 0; padding: 18px 0; border-top: 1px solid #e7e9ec; border-bottom: 1px solid #e7e9ec; color: #555d66; font-size: 14px; }
+    .confirmation-details strong { color: #1d1d1f; text-align: right; }
+    .confirmation-link { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; padding: 10px 16px; border-radius: 7px; background: #0071e3; color: #fff; font-weight: 650; }
+    .confirmation-link:hover { background: #005bb5; }
+    @media (max-width: 480px) { .confirmation-panel { padding: 23px 18px; } .confirmation-panel h1 { font-size: 25px; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="confirmation-page">
+    <section class="confirmation-panel">
+        <h1>Thanks, {{ order.name }}. Your order is confirmed.</h1>
+        <p>Cash on delivery is selected. You can review the details below.</p>
+        <div class="confirmation-details">
+            <span>Order number</span><strong>#{{ order.pk }}</strong>
+            <span>Order total</span><strong>₹{{ order.total_amount|floatformat:2 }}</strong>
+            <span>Payment method</span><strong>{{ order.get_payment_method_display }}</strong>
+            <span>Delivery address</span><strong>{{ order.address }}</strong>
+        </div>
+        <a class="confirmation-link" href="{% url 'product_list' %}">Continue shopping</a>
+    </section>
+</main>
+{% endblock %}
