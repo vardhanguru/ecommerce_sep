@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
 	Your Cart | OneStop Shopping
@@ -363,7 +364,7 @@
 					<article class="cart-item">
 						<a href="{% url 'product_details' item.product.pk %}" aria-label="View {{ item.product.product_name }}">
 							{% if item.product.image %}
-								<img class="cart-item-image" src="{{ item.product.image.url }}" alt="{{ item.product.product_name }}">
+								<img class="cart-item-image" src="{% static item.product.image %}" alt="{{ item.product.product_name }}">
 							{% else %}
 								<span class="cart-item-placeholder">No image</span>
 							{% endif %}

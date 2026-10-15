@@ -10,7 +10,13 @@ class Category(models.Model):
 
     description = models.TextField(blank=True)
 
-    image = models.ImageField(upload_to='category/', blank=True, null=True)
+    image = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        verbose_name='Static image path',
+        help_text='Path relative to static/, for example category/example.jpg.',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -29,7 +35,12 @@ class Products(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)  # this is available at the time of product creation, it wont change at all
 
-    image = models.ImageField(upload_to='products/', blank=True)
+    image = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name='Static image path',
+        help_text='Path relative to static/, for example products/example.jpg.',
+    )
 
     updated_at = models.DateTimeField(auto_now=True)
 

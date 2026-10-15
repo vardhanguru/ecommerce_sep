@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     {{ product.product_name }} | OneStop Shopping
@@ -199,7 +200,7 @@
     <article class="detail-layout">
         <div class="detail-media">
             {% if product.image %}
-                <img class="detail-image" src="{{ product.image.url }}" alt="{{ product.product_name }}">
+                <img class="detail-image" src="{% static product.image %}" alt="{{ product.product_name }}">
             {% else %}
                 <p class="detail-no-image">No product image available</p>
             {% endif %}

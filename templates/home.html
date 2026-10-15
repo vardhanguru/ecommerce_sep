@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}OneStop Shopping | Discover your next favorite{% endblock %}
 
@@ -355,7 +356,7 @@
                         <a class="featured-product" href="{% url 'product_details' product.pk %}">
                             <div class="featured-image-wrap">
                                 {% if product.image %}
-                                    <img class="featured-image" src="{{ product.image.url }}" alt="{{ product.product_name }}" loading="lazy">
+                                    <img class="featured-image" src="{% static product.image %}" alt="{{ product.product_name }}" loading="lazy">
                                 {% else %}
                                     <div class="featured-no-image">Image coming soon</div>
                                 {% endif %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block title %}
@@ -774,7 +775,7 @@
 
 
                             <img
-                                src="{{ product.image.url }}"
+                                src="{% static product.image %}"
                                 alt="{{ product.product_name }}"
                                 class="product-image"
                                 loading="lazy"
