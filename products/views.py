@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Products
 from .forms import ProductForm
 from cart.models import CartItem
-
+from accounts.models import User
 
 def product_create(request):
 
@@ -23,6 +23,7 @@ def product_create(request):
 
 
 def product_list(request):
+    user = get_object_or_404(User, username=request.user)
     category_id = request.GET.get('category')
     search_query = request.GET.get('search', '')
     print(category_id)
@@ -43,7 +44,7 @@ def product_list(request):
         cart_count = sum(
             CartItem.objects.filter(cart__user=request.user).values_list('quantity', flat=True)
         )
-    data = {'products_list': products_list, 'cart_count': cart_count}
+    data = {'products_list': products_list, 'cart_count': cart_count, 'seller': user.seller_or_not}
 
     return render(request, 'products/products.html', context=data)
 
