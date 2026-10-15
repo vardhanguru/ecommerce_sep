@@ -83,12 +83,14 @@ WSGI_APPLICATION = 'ecommerce_sep.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+import dj_database_url
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": dj_database_url.parse(
+            'postgresql://ecommerce_sep_user:l9YVgDUaAcTIltZcjFOmaWfFXskaOsCB@dpg-db85g8mq1p3s739ln4s0-a.oregon-postgres.render.com/ecommerce_sep',
+            conn_max_age=600,
+        )
     }
-}
+
 
 
 # Password validation
